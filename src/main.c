@@ -13,7 +13,8 @@
 enum
 {
   SOURCE_SHADER_1A = 0,
-  SOURCE_SHADER_1B
+  SOURCE_SHADER_1B,
+  SOURCE_SHADER_2A
 };
 
 int G_source;
@@ -119,6 +120,8 @@ int main(int argc, char *argv[])
         G_source = SOURCE_SHADER_1A;
       else if (!strcmp("shader1b", argv[i]))
         G_source = SOURCE_SHADER_1B;
+      else if (!strcmp("shader2a", argv[i]))
+        G_source = SOURCE_SHADER_2A;
       else
       {
         printf("Unknown source %s. Exiting...\n", argv[i]);
@@ -139,6 +142,8 @@ int main(int argc, char *argv[])
     fp_out = fopen("shader1a.dat", "wb");
   else if (G_source == SOURCE_SHADER_1B)
     fp_out = fopen("shader1b.dat", "wb");
+  else if (G_source == SOURCE_SHADER_2A)
+    fp_out = fopen("shader2a.dat", "wb");
   else
   {
     printf("Unknown source. Exiting...\n");
@@ -200,6 +205,32 @@ int main(int argc, char *argv[])
     WRITE_SHADERS_TO_FILE(shader1b, pass_E_vertical_scanlines)
     WRITE_SHADERS_TO_FILE(shader1b, pass_OV1_standard)
     WRITE_SHADERS_TO_FILE(shader1b, pass_OV2_fade)
+  }
+  else if (G_source == SOURCE_SHADER_2A)
+  {
+    /* write signature */
+    signature[0] = 'S';
+    signature[1] = 'H';
+    signature[2] = 'A';
+    signature[3] = 'D';
+    signature[4] = 'E';
+    signature[5] = 'R';
+    signature[6] = '2';
+    signature[7] = 'A';
+
+    fwrite(signature, 1, 8, fp_out);
+
+    /* write shaders */
+    WRITE_SHADERS_TO_FILE(shader2a, pass_OV_A_tiles)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_OV_B_sky_parallax)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_OV_C_sprites)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_OV_D_fade)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_OV_E_convert_to_rgb)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_UP_A_apply_brightness)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_UP_B_nearest_upscale)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_UP_C_linear_upscale)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_UP_D_horizontal_cubic)
+    WRITE_SHADERS_TO_FILE(shader2a, pass_UP_E_vertical_scanlines)
   }
 
   /* close output file */
