@@ -12,7 +12,6 @@ uniform sampler1D parallax_sampler;
 
 uniform int hori_shift;
 uniform int vert_shift;
-uniform float vert_weight;
 
 #define OVERSCAN_WIDTH  320
 #define OVERSCAN_HEIGHT 224
@@ -50,7 +49,7 @@ void main()
   pixel_position.y = texture_dim.y - 1 - int(floor(texcoord.y * texture_dim.y));
 
   /* add vertical shift to pixel position */
-  pixel_position.y += int(round(vert_weight * vert_shift));
+  pixel_position.y += vert_shift;
 
   /* determine the parallax coord based on the scanline */
   par_coord_center = ((pixel_position.y % OVERSCAN_HEIGHT) + 0.5) * parallax_step;
