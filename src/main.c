@@ -14,7 +14,8 @@ enum
 {
   SOURCE_SHADER_1A = 0,
   SOURCE_SHADER_1B,
-  SOURCE_SHADER_2A
+  SOURCE_SHADER_2A,
+  SOURCE_SHADER_2Z
 };
 
 int G_source;
@@ -122,6 +123,8 @@ int main(int argc, char *argv[])
         G_source = SOURCE_SHADER_1B;
       else if (!strcmp("shader2a", argv[i]))
         G_source = SOURCE_SHADER_2A;
+      else if (!strcmp("shader2z", argv[i]))
+        G_source = SOURCE_SHADER_2Z;
       else
       {
         printf("Unknown source %s. Exiting...\n", argv[i]);
@@ -144,6 +147,8 @@ int main(int argc, char *argv[])
     fp_out = fopen("shader1b.dat", "wb");
   else if (G_source == SOURCE_SHADER_2A)
     fp_out = fopen("shader2a.dat", "wb");
+  else if (G_source == SOURCE_SHADER_2Z)
+    fp_out = fopen("shader2z.dat", "wb");
   else
   {
     printf("Unknown source. Exiting...\n");
@@ -231,6 +236,26 @@ int main(int argc, char *argv[])
     WRITE_SHADERS_TO_FILE(shader2a, pass_UP_C_linear_upscale)
     WRITE_SHADERS_TO_FILE(shader2a, pass_UP_D_horizontal_cubic)
     WRITE_SHADERS_TO_FILE(shader2a, pass_UP_E_vertical_scanlines)
+  }
+  else if (G_source == SOURCE_SHADER_2Z)
+  {
+    /* write signature */
+    signature[0] = 'S';
+    signature[1] = 'H';
+    signature[2] = 'A';
+    signature[3] = 'D';
+    signature[4] = 'E';
+    signature[5] = 'R';
+    signature[6] = '2';
+    signature[7] = 'Z';
+
+    fwrite(signature, 1, 8, fp_out);
+
+    /* write shaders */
+    WRITE_SHADERS_TO_FILE(shader2z, pass_A_tiles)
+    WRITE_SHADERS_TO_FILE(shader2z, pass_B_sprites)
+    WRITE_SHADERS_TO_FILE(shader2z, pass_C_convert_to_rgb)
+    WRITE_SHADERS_TO_FILE(shader2z, pass_D_linear_upscale)
   }
 
   /* close output file */
